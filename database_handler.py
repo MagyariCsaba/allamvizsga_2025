@@ -22,6 +22,12 @@ class MQTTMessage(Base):
     gyro_x = Column(Float)
     gyro_y = Column(Float)
     gyro_z = Column(Float)
+    accel_x2 = Column(Float)
+    accel_y2 = Column(Float)
+    accel_z2 = Column(Float)
+    gyro_x2 = Column(Float)
+    gyro_y2 = Column(Float)
+    gyro_z2 = Column(Float)
 
 
 Base.metadata.create_all(engine)
@@ -38,12 +44,18 @@ class DatabaseHandler:
                 gps_x=data['gpsPos'][0],
                 gps_y=data['gpsPos'][1],
                 gps_z=data['gpsPos'][2],
-                accel_x=data['accelMeas'][0],
-                accel_y=data['accelMeas'][1],
-                accel_z=data['accelMeas'][2],
-                gyro_x=data['gyroMeas'][0],
-                gyro_y=data['gyroMeas'][1],
-                gyro_z=data['gyroMeas'][2]
+                accel_x=data['imuAccel'][0],
+                accel_y=data['imuAccel'][1],
+                accel_z=data['imuAccel'][2],
+                gyro_x=data['imuGyro'][0],
+                gyro_y=data['imuGyro'][1],
+                gyro_z=data['imuGyro'][2],
+                accel_x2=data['imu2Accel'][0],
+                accel_y2=data['imu2Accel'][1],
+                accel_z2=data['imu2Accel'][2],
+                gyro_x2=data['imu2Gyro'][0],
+                gyro_y2=data['imu2Gyro'][1],
+                gyro_z2=data['imu2Gyro'][2]
             )
             self.session.add(mqtt_message)
             self.session.commit()

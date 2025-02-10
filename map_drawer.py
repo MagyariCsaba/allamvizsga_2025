@@ -27,7 +27,8 @@ class MapDrawer:
                     displayed_names.add(street_name)
 
     def plot_bicycle(self, lat, lon, theta, alpha):
-        lb, lw = 0.002, 0.001
+        #theta -> bicikli szoge,  alpha -> elso kerek szoge
+        lb, lw = 0.002, 0.001  #tengelyek hosszai
         rear_x, rear_y = lon, lat
         front_x = rear_x + lb * np.cos(theta)
         front_y = rear_y + lb * np.sin(theta)
