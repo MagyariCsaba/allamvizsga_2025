@@ -1,0 +1,31 @@
+1.MQTT inicializálás
+A szkript beállít egy MQTT klienst (mqClient), amely a tcp://192.168.2.241 szerveren fut, myClient azonosítóval és 1883-as porton.
+Meghatározza a küldendő üzenetek cél témáját (eesTopic).
+Egy változó (lastGPS) tárolja az utolsó ismert GPS koordinátákat.
+
+2.Szimulációs környezet létrehozása
+A drivingScenario segítségével definiál egy georeferenciált szimulációs környezetet (lla0 = [42 -71 50]).
+Egy járművet (v) ad a környezethez.
+Az útvonalat meghatározó pontokat és a sebességet tárolja (waypoints, speed).
+A smoothTrajectory függvénnyel biztosítja a sima mozgást az útvonal mentén.
+Egy ábra (figure) jeleníti meg a jármű útvonalának pontjait.
+
+3.Szenzorok definiálása
+IMU (inerciális mérőegység): gyorsulás- és giroszkóp-érzékelő adatok szimulálására (imuSensor).
+GPS: földrajzi helymeghatározásra (gpsSensor).
+Kerékfordulat-érzékelő: a jármű kerekének elfordulását méri (wheelEncoderAckermann).
+
+4.Szenzoradatok gyűjtése és MQTT-n küldése
+Egy while advance(s) ciklus futtatja a szimulációt.
+A jármű állapotát (state(v)) lekéri és koordinátarendszerek között konvertálja.
+A szenzorok adatait (IMU, GPS, kerékfordulat-érzékelő) kiszámítja és tárolja.
+A szenzoradatok JSON formátumban (jsonencode(dataPoint)) MQTT-n keresztül továbbítódnak.
+A fontosabb adatokat a konzolon is kiírja (fprintf).
+
+5.Adatok vizualizálása
+A gyűjtött szenzoradatokat grafikonokon ábrázolja:
+Kerékfordulat (plot(ticks)).
+Gyorsulás (plot(accel)).
+Giroszkóp (plot(gyro)).
+GPS pozíció (geoplot(lla(:,1),lla(:,2))).
+GPS sebesség (plot(gpsVel)).
