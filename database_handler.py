@@ -62,3 +62,5 @@ class DatabaseHandler:
         except SQLAlchemyError as e:
             print("Database error:", e)
             self.session.rollback()
+        finally:
+            self.session.close()

@@ -1,13 +1,39 @@
 from database_handler import DatabaseHandler
 from mqtt_client import MQTTClient
 from map_drawer import MapDrawer
-import numpy as np
+import signal
+import sys
+
+
+def signal_handler(sig, frame):
+    print("\nShutting down gracefully...")
+    if mqtt_client:
+        mqtt_client.stop()
+    sys.exit(0)
+
 
 if __name__ == "__main__":
+    # Initialize components
     db_handler = DatabaseHandler()
-    mqtt_client = MQTTClient(db_handler)
-    #map_drawer = MapDrawer("Marosvásárhely, Romania")
-    #map_drawer.draw_street_names()
-    #map_drawer.plot_bicycle(46.547, 24.551, np.pi / 2, np.pi / 3)
-    #map_drawer.show_map()
-    mqtt_client.start()
+    map_drawer = MapDrawer("Marosvásárhely, Romania")
+    mqtt_client = None
+
+    # Register signal handler for clean shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+
+    try:
+        map_drawer.show_map()
+
+        mqtt_client = MQTTClient(db_handler, map_drawer)
+
+        print("Starting MQTT client. Press Ctrl+C to stop.")
+        mqtt_client.start()
+
+    except KeyboardInterrupt:
+        print("\nShutting down...")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        # Clean up
+        if mqtt_client:
+            mqtt_client.stop()
