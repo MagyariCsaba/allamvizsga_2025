@@ -1,6 +1,6 @@
-from database_handler import DatabaseHandler
-from mqtt_client import MQTTClient
-from map_drawer import MapDrawer
+from backend.database_handler import DatabaseHandler
+from backend.mqtt_client import MQTTClient
+from backend.map_drawer import MapDrawer
 import signal
 import sys
 
