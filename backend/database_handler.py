@@ -3,7 +3,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 
-DATABASE_URI = "mysql+pymysql://root:Torres100@127.0.0.1:3306/adatok"
+from backend import DATABASE_URI
+
+#DATABASE_URI = "mysql+pymysql://root:Torres100@127.0.0.1:3306/adatok"
 engine = create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -64,3 +66,5 @@ class DatabaseHandler:
             self.session.rollback()
         finally:
             self.session.close()
+
+

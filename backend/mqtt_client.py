@@ -24,12 +24,10 @@ class MQTTClient:
             message_content = message.payload.decode('utf-8')
             data = json.loads(message_content)
 
-            # Calculate orientation angle from first IMU
             ax = data['imuAccel'][0]
             ay = data['imuAccel'][1]
             theta = math.atan2(ay, ax)
 
-            # Calculate second angle from second IMU
             ax2 = data['imu2Accel'][0]
             ay2 = data['imu2Accel'][1]
             alpha = math.atan2(ay2, ax2)
@@ -52,7 +50,6 @@ class MQTTClient:
     def start(self):
         try:
             self.client.loop_start()
-            # Keep the main thread running
             while self.running:
                 time.sleep(0.1)
         except KeyboardInterrupt:

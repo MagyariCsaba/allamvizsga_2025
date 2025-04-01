@@ -21,6 +21,7 @@ class MapDrawer:
         self.json_file = os.path.join(self.frontend_dir, "coordinates.json")
         self.config_file = os.path.join(self.frontend_dir, "map_config.json")
 
+
         # Ensure frontend directory exists
         if not os.path.exists(self.frontend_dir):
             raise RuntimeError(f"Frontend directory not found: {self.frontend_dir}")
@@ -96,7 +97,6 @@ class MapDrawer:
 
         self.server = HTTPServer(("", self.port), NoCacheHTTPHandler)
 
-        # Run on separate thread
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
         self.server_thread.start()
@@ -109,8 +109,10 @@ class MapDrawer:
             self.browser_opened = True
 
     def plot_bicycle(self, lat, lon, theta, alpha):
-        lb, lw = 0.0015, 0.0008  # axis lengths
-        rear_lon, rear_lat = lon, lat  # rear axis start
+        # axis lengths
+        lb, lw = 0.0015, 0.0008
+        # rear axis start
+        rear_lon, rear_lat = lon, lat
         # rear axis end
         front_lon = rear_lon + lb * np.cos(theta)
         front_lat = rear_lat + lb * np.sin(theta)
@@ -118,7 +120,6 @@ class MapDrawer:
         wheel_lon = front_lon + lw * np.cos(alpha)
         wheel_lat = front_lat + lw * np.sin(alpha)
 
-        # Latest coordinates
         self.latest_coordinates = {
             'rear_lon': rear_lon,
             'rear_lat': rear_lat,
@@ -128,22 +129,21 @@ class MapDrawer:
             'wheel_lat': wheel_lat
         }
 
-        # Update coordinates.json file with latest position
         with open(self.json_file, 'w') as f:
             json.dump(self.latest_coordinates, f)
-            f.flush()  # Ensure data is written immediately
-            os.fsync(f.fileno())  # Force OS to write data to disk
+            f.flush()
+            os.fsync(f.fileno())
 
         # Start server if needed
         if self.server_thread is None:
             self.start_server()
             self.open_browser()
 
-    def show_map(self):
-        # Start the server
-        self.start_server()
 
-        # Open in browser
+
+
+    def show_map(self):
+        self.start_server()
         self.open_browser()
 
     def cleanup(self):

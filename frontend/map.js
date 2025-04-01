@@ -50,9 +50,11 @@ function initializeMap() {
             ];
 
             // Create the map
+
             Plotly.newPlot('mapPlot', mapData, mapLayout);
 
             // Start regular updates
+
             setInterval(updateCoordinates, 1000);
         })
         .catch(error => {
@@ -67,19 +69,17 @@ function updateCoordinates() {
     fetch('coordinates.json?_=' + new Date().getTime())
         .then(response => response.json())
         .then(coords => {
-            // Update bicycle frame
+
             Plotly.restyle('mapPlot', {
                 'lon': [[coords.rear_lon, coords.front_lon]],
                 'lat': [[coords.rear_lat, coords.front_lat]]
             }, [1]);
 
-            // Update wheel
             Plotly.restyle('mapPlot', {
                 'lon': [[coords.front_lon, coords.wheel_lon]],
                 'lat': [[coords.front_lat, coords.wheel_lat]]
             }, [2]);
 
-            // Update status
             document.getElementById('status').innerText =
                 'Last update: ' + new Date().toLocaleTimeString() +
                 ' - Position: ' + coords.rear_lat.toFixed(6) + ', ' + coords.rear_lon.toFixed(6);
