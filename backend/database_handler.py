@@ -1,11 +1,13 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, Float, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 
-from backend import DATABASE_URI
+load_dotenv()
 
-#DATABASE_URI = "mysql+pymysql://root:Torres100@127.0.0.1:3306/adatok"
+DATABASE_URI = os.getenv("DATABASE_URI", "mysql+pymysql://root:default@127.0.0.1:3306/adatok")
 engine = create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
