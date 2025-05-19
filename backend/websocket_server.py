@@ -16,7 +16,7 @@ class WebSocketServer:
         self.server = None
         self.server_thread = None
 
-    async def handler(self, websocket, path):
+    async def handler(self, websocket):
         # Register client
         self.connected_clients.add(websocket)
         try:

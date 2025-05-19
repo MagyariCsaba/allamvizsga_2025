@@ -1,11 +1,8 @@
 import os
 import json
-import threading
 import webbrowser
 import numpy as np
 import osmnx as ox
-import plotly.graph_objects as go
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 class MapDrawer:
     def __init__(self, place_name):
@@ -28,11 +25,9 @@ class MapDrawer:
         if not os.path.exists(self.frontend_dir):
             raise RuntimeError(f"Frontend directory not found: {self.frontend_dir}")
 
-        # Server configuration
-        self.port = 8000
-        self.server_thread = None
-        self.server = None
+        # Browser settings
         self.browser_opened = False
+        self.server_url = "http://localhost:8000"  # This URL will be served by the main server
 
         # Extract street coordinates for frontend
         edge_x = []
@@ -81,38 +76,9 @@ class MapDrawer:
             'wheel_lat': self.nodes['y'].mean()
         }
 
-        # Save initial coordinates to file
-        with open(self.json_file, 'w') as f:
-            json.dump(self.latest_coordinates, f)
-
     def set_websocket_server(self, websocket_server):
         """Set the WebSocket server reference"""
         self.websocket_server = websocket_server
-
-    def start_server(self):
-        # Change to the frontend directory
-        os.chdir(self.frontend_dir)
-
-        # Create HTTP server with no-cache handler
-        class NoCacheHTTPHandler(SimpleHTTPRequestHandler):
-            def end_headers(self):
-                self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-                self.send_header("Pragma", "no-cache")
-                self.send_header("Expires", "0")
-                SimpleHTTPRequestHandler.end_headers(self)
-
-        self.server = HTTPServer(("", self.port), NoCacheHTTPHandler)
-
-        self.server_thread = threading.Thread(target=self.server.serve_forever)
-        self.server_thread.daemon = True
-        self.server_thread.start()
-
-        print(f"Server started at http://localhost:{self.port}")
-
-    def open_browser(self):
-        if not self.browser_opened:
-            webbrowser.open(f"http://localhost:{self.port}/")
-            self.browser_opened = True
 
     def plot_bicycle(self, lat, lon, theta, alpha):
         # axis lengths
@@ -135,29 +101,15 @@ class MapDrawer:
             'wheel_lat': wheel_lat
         }
 
-        with open(self.json_file, 'w') as f:
-            json.dump(self.latest_coordinates, f)
-            f.flush()
-            os.fsync(f.fileno())
-
-        # Send via WebSocket if available
+        # Send via WebSocket
         if self.websocket_server:
             self.websocket_server.update_coordinates(self.latest_coordinates)
-
-        # Start server if needed
-        if self.server_thread is None:
-            self.start_server()
-            self.open_browser()
-
-
-
+        else:
+            print("Warning: WebSocket server not set, can't send coordinates")
 
     def show_map(self):
-        self.start_server()
-        self.open_browser()
-
-    def cleanup(self):
-        if self.server:
-            self.server.shutdown()
-            if self.server_thread:
-                self.server_thread.join()
+        # Open browser to view the map
+        if not self.browser_opened:
+            webbrowser.open(self.server_url)
+            self.browser_opened = True
+            print(f"Browser opened to {self.server_url}")

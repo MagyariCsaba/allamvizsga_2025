@@ -89,38 +89,11 @@ function initializeMap() {
             ];
 
             // Create the map
-
             Plotly.newPlot('mapPlot', mapData, mapLayout);
-
-            /// For backward compatibility - keep polling until WebSocket connection is established
-            checkAndLoadInitialPosition();
-
         })
         .catch(error => {
             console.error('Error loading map configuration:', error);
             document.getElementById('status').innerText = 'Error loading map configuration';
-        });
-}
-
-// Function to check for initial position data
-function checkAndLoadInitialPosition() {
-    // Only use this as a fallback if WebSocket isn't connected yet
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        return;  // WebSocket is connected, no need for HTTP fallback
-    }
-
-    // Add random query parameter to prevent caching
-    fetch('coordinates.json?_=' + new Date().getTime())
-        .then(response => response.json())
-        .then(coords => {
-            updateBicyclePosition(coords);
-
-            document.getElementById('status').innerText =
-                'Last update (HTTP): ' + new Date().toLocaleTimeString() +
-                ' - Position: ' + coords.rear_lat.toFixed(6) + ', ' + coords.rear_lon.toFixed(6);
-        })
-        .catch(error => {
-            console.error('Error fetching coordinates:', error);
         });
 }
 
