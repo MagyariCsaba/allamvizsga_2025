@@ -21,6 +21,8 @@ class MapDrawer:
         self.json_file = os.path.join(self.frontend_dir, "coordinates.json")
         self.config_file = os.path.join(self.frontend_dir, "map_config.json")
 
+        # Get WebSocket server reference (will be set later)
+        self.websocket_server = None
 
         # Ensure frontend directory exists
         if not os.path.exists(self.frontend_dir):
@@ -83,6 +85,10 @@ class MapDrawer:
         with open(self.json_file, 'w') as f:
             json.dump(self.latest_coordinates, f)
 
+    def set_websocket_server(self, websocket_server):
+        """Set the WebSocket server reference"""
+        self.websocket_server = websocket_server
+
     def start_server(self):
         # Change to the frontend directory
         os.chdir(self.frontend_dir)
@@ -110,7 +116,7 @@ class MapDrawer:
 
     def plot_bicycle(self, lat, lon, theta, alpha):
         # axis lengths
-        lb, lw = 0.0015, 0.0008
+        lb, lw = 0.00015, 0.00008
         # rear axis start
         rear_lon, rear_lat = lon, lat
         # rear axis end
@@ -133,6 +139,10 @@ class MapDrawer:
             json.dump(self.latest_coordinates, f)
             f.flush()
             os.fsync(f.fileno())
+
+        # Send via WebSocket if available
+        if self.websocket_server:
+            self.websocket_server.update_coordinates(self.latest_coordinates)
 
         # Start server if needed
         if self.server_thread is None:
