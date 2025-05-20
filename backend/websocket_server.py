@@ -11,7 +11,6 @@ class WebSocketServer:
         self.port = port
         self.connected_clients = set()
         self.frontend_dir = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).joinpath("frontend")
-        self.json_file = self.frontend_dir.joinpath("coordinates.json")
         self.running = False
         self.server = None
         self.server_thread = None
@@ -69,12 +68,6 @@ class WebSocketServer:
 
     def update_coordinates(self, coordinates):
         """Update coordinates and broadcast to all clients"""
-        # Save coordinates to file (for backward compatibility)
-        with open(self.json_file, 'w') as f:
-            json.dump(coordinates, f)
-            f.flush()
-            os.fsync(f.fileno())
-
         # Create a new event loop for broadcasting
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
