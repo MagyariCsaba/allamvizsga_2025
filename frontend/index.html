@@ -9,7 +9,29 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="status">Waiting for WebSocket connection...</div>
+    <div class="header">
+        <div id="status">Waiting for WebSocket connection...</div>
+
+        <!-- Route Query Panel -->
+        <div class="route-panel">
+            <h3>Get route</h3>
+            <div class="datetime-inputs">
+                <div class="datetime-group">
+                    <label>Start time:</label>
+                    <input type="date" id="start-date" />
+                    <input type="time" id="start-time" step="1" />
+                </div>
+                <div class="datetime-group">
+                    <label>End time</label>
+                    <input type="date" id="end-date" />
+                    <input type="time" id="end-time" step="1" />
+                </div>
+            </div>
+            <button id="query-route" onclick="queryRoute()">Get route</button>
+            <button id="clear-route" onclick="clearRoute()">Delete route</button>
+            <div id="route-info"></div>
+        </div>
+    </div>
     <div id="mapPlot"></div>
     <script src="map.js"></script>
 </body>

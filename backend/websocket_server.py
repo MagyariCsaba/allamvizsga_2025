@@ -4,6 +4,7 @@ import websockets
 import os
 import threading
 from pathlib import Path
+from backend.route_handler import RouteHandler
 
 
 class WebSocketServer:
@@ -14,31 +15,68 @@ class WebSocketServer:
         self.running = False
         self.server = None
         self.server_thread = None
+        self.route_handler = RouteHandler()
 
     async def handler(self, websocket):
         # Register client
         self.connected_clients.add(websocket)
         try:
-            # Keep connection open
+            # Listen for messages from clients
             async for message in websocket:
-                # We don't expect any messages from clients in this app
-                pass
+                try:
+                    data = json.loads(message)
+                    await self.handle_client_message(websocket, data)
+                except json.JSONDecodeError:
+                    await websocket.send(json.dumps({
+                        'type': 'error',
+                        'message': 'Invalid JSON format'
+                    }))
         except websockets.exceptions.ConnectionClosed:
             pass
         finally:
             # Unregister client
             self.connected_clients.remove(websocket)
 
+    async def handle_client_message(self, websocket, data):
+        """Handle incoming messages from clients"""
+        message_type = data.get('type')
+
+        if message_type == 'get_route':
+            # Handle route request
+            start_date = data.get('start_date')
+            start_time = data.get('start_time')
+            end_date = data.get('end_date')
+            end_time = data.get('end_time')
+
+            route_data = self.route_handler.get_route_for_period(
+                start_date, start_time, end_date, end_time
+            )
+
+            response = {
+                'type': 'route_data',
+                'data': route_data,
+                'start_date': start_date,
+                'start_time': start_time,
+                'end_date': end_date,
+                'end_time': end_time
+            }
+
+            await websocket.send(json.dumps(response))
+
     async def broadcast_coordinates(self, coordinates):
         if not self.connected_clients:
             return
 
         # Convert to JSON
-        message = json.dumps(coordinates)
+        message = json.dumps({
+            'type': 'coordinates_update',
+            'data': coordinates
+        })
 
         # Send to all connected clients
         await asyncio.gather(
-            *[client.send(message) for client in self.connected_clients]
+            *[client.send(message) for client in self.connected_clients],
+            return_exceptions=True
         )
 
     async def start_server(self):
