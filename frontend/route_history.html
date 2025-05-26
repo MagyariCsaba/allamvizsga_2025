@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Route History Viewer</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="navigation">
+            <h2>Route History Viewer</h2>
+            <button onclick="window.location.href='index.html'" class="nav-button">
+                Back to Live Tracking
+            </button>
+        </div>
+
+        <div id="status">Connecting to database...</div>
+
+        <!-- Route Query Panel -->
+        <div class="route-panel">
+            <h3>Get Historical Route</h3>
+            <div class="datetime-inputs">
+                <div class="datetime-group">
+                    <label>Start time:</label>
+                    <input type="date" id="start-date" />
+                    <input type="time" id="start-time" step="1" />
+                </div>
+                <div class="datetime-group">
+                    <label>End time:</label>
+                    <input type="date" id="end-date" />
+                    <input type="time" id="end-time" step="1" />
+                </div>
+            </div>
+            <button id="query-route" onclick="queryRoute()">Get Route</button>
+            <button id="clear-route" onclick="clearRoute()">Clear Route</button>
+            <div id="route-info"></div>
+        </div>
+    </div>
+    <div id="mapPlot"></div>
+    <script src="route_history.js"></script>
+</body>
+</html>

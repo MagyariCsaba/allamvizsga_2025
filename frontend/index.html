@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Vehicle Tracking Map</title>
+    <title>Live Vehicle Tracking</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -10,27 +10,14 @@
 </head>
 <body>
     <div class="header">
-        <div id="status">Waiting for WebSocket connection...</div>
-
-        <!-- Route Query Panel -->
-        <div class="route-panel">
-            <h3>Get route</h3>
-            <div class="datetime-inputs">
-                <div class="datetime-group">
-                    <label>Start time:</label>
-                    <input type="date" id="start-date" />
-                    <input type="time" id="start-time" step="1" />
-                </div>
-                <div class="datetime-group">
-                    <label>End time</label>
-                    <input type="date" id="end-date" />
-                    <input type="time" id="end-time" step="1" />
-                </div>
-            </div>
-            <button id="query-route" onclick="queryRoute()">Get route</button>
-            <button id="clear-route" onclick="clearRoute()">Delete route</button>
-            <div id="route-info"></div>
+        <div class="navigation">
+            <h2>Live Vehicle Tracking</h2>
+            <button onclick="window.location.href='route_history.html'" class="nav-button">
+                View Route History
+            </button>
         </div>
+
+        <div id="status">Waiting for WebSocket connection...</div>
     </div>
     <div id="mapPlot"></div>
     <script src="map.js"></script>
