@@ -1,6 +1,7 @@
 // Global variable to store map layout
 let mapLayout;
 let socket;
+let isFirstUpdate = true;
 
 
 // Initialize map on page load
@@ -108,4 +109,26 @@ function updateBicyclePosition(coords) {
         'lon': [[coords.front_lon, coords.wheel_lon]],
         'lat': [[coords.front_lat, coords.wheel_lat]]
     }, [2]);
+
+    centerMapOnBicycle(coords.rear_lat, coords.rear_lon);
+
+}
+
+function centerMapOnBicycle(lat, lon) {
+    // Create updated layout with new center
+    const updatedLayout = {
+        'mapbox.center': {
+            lat: lat,
+            lon: lon
+        }
+    };
+
+    // If this is the first update, also set a closer zoom level
+    if (isFirstUpdate) {
+        updatedLayout['mapbox.zoom'] = 15; // Closer zoom for better tracking
+        isFirstUpdate = false;
+    }
+
+    // Update the map layout to center on the bicycle
+    Plotly.relayout('mapPlot', updatedLayout);
 }

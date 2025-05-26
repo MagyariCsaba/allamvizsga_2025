@@ -15,7 +15,7 @@ class MQTTClient:
 
         # Message processing settings
         self.message_counter = 0
-        self.update_frequency = 1 #after every x message
+        self.update_frequency = 5 #after every x message
         self.running = True
 
 
