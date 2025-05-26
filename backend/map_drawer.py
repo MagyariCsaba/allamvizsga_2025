@@ -15,7 +15,6 @@ class MapDrawer:
         # Setup paths
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.frontend_dir = os.path.join(self.base_dir, "frontend")
-        self.json_file = os.path.join(self.frontend_dir, "coordinates.json")
         self.config_file = os.path.join(self.frontend_dir, "map_config.json")
 
         # Get WebSocket server reference (will be set later)
