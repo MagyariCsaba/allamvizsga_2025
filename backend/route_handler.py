@@ -11,7 +11,6 @@ class RouteHandler:
     def get_route_data(self, start_time, end_time):
         session = Session()
         try:
-            # Lekérdezés az időintervallum alapján
             query = session.query(MQTTMessage).filter(
                 and_(
                     MQTTMessage.timestamp >= start_time,
@@ -23,12 +22,11 @@ class RouteHandler:
 
             results = query.all()
 
-            # Koordináták formázása
             route_data = []
             for record in results:
                 route_data.append({
-                    'lat': record.gps_x,  # GPS koordináták (latitude)
-                    'lon': record.gps_y,  # GPS koordináták (longitude)
+                    'lat': record.gps_x,
+                    'lon': record.gps_y,
                     'timestamp': record.timestamp.isoformat()
                 })
 

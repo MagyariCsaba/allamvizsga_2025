@@ -21,7 +21,6 @@ def signal_handler(sig, frame):
 
 
 def start_http_server(port, directory):
-    """Start a simple HTTP server in a separate thread"""
     os.chdir(directory)
 
     class NoCacheHTTPHandler(SimpleHTTPRequestHandler):
@@ -42,34 +41,26 @@ def start_http_server(port, directory):
 
 
 if __name__ == "__main__":
-    # Hardcoded configuration
     HTTP_PORT = 8000
     WS_PORT = 8765
 
-    # Initialize components
     db_handler = DatabaseHandler()
     websocket_server = WebSocketServer(port=WS_PORT)
     map_drawer = MapDrawer("Marosvásárhely, Romania")
     mqtt_client = None
     http_server = None
 
-    # Get frontend directory path
     base_dir = os.path.dirname(os.path.abspath(__file__))
     frontend_dir = os.path.join(base_dir, "frontend")
 
-    # Start HTTP server for static files
     http_server = start_http_server(HTTP_PORT, frontend_dir)
 
-    # Update map_drawer's server URL
     map_drawer.server_url = f"http://localhost:{HTTP_PORT}"
 
-    # Connect the WebSocket server to the map drawer
     map_drawer.set_websocket_server(websocket_server)
 
-    # Start the WebSocket server
     websocket_server.start()
 
-    # Register signal handler for clean shutdown
     signal.signal(signal.SIGINT, signal_handler)
 
     try:
@@ -85,7 +76,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error: {e}")
     finally:
-        # Clean up
         if mqtt_client:
             mqtt_client.stop()
         if websocket_server:

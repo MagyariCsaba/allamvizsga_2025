@@ -1,21 +1,17 @@
-// Global variables
 let mapLayout;
 let socket;
 let currentRouteData = null;
 
-// Initialize map on page load
 document.addEventListener('DOMContentLoaded', function () {
     initializeMap();
     initWebSocket();
     setDefaultDateTime();
 });
 
-// Set default date and time values
 function setDefaultDateTime() {
     const now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    // Format dates for input fields
     const todayStr = now.toISOString().split('T')[0];
     const yesterdayStr = yesterday.toISOString().split('T')[0];
     const currentTimeStr = now.toTimeString().split(' ')[0];
@@ -27,7 +23,6 @@ function setDefaultDateTime() {
     document.getElementById('end-time').value = currentTimeStr;
 }
 
-// Initialize WebSocket connection
 function initWebSocket() {
     socket = new WebSocket('ws://localhost:8765');
 
@@ -56,7 +51,6 @@ function initWebSocket() {
     });
 }
 
-// Function to initialize the map
 function initializeMap() {
     fetch('map_config.json')
         .then(response => response.json())
@@ -64,7 +58,6 @@ function initializeMap() {
             mapLayout = config.layout;
 
             const mapData = [
-                // Streets layer
                 {
                     type: 'scattermapbox',
                     lon: config.streets.lon,
@@ -74,14 +67,14 @@ function initializeMap() {
                     hoverinfo: 'none',
                     name: 'Streets'
                 },
-                // Historical route trace
+
                 {
                     type: 'scattermapbox',
                     lon: [],
                     lat: [],
                     mode: 'lines+markers',
                     line: { width: 4, color: 'green' },
-                    marker: { size: 6, color: 'green' },
+                    marker: { size: 6, color: 'red' },
                     name: 'Historical Route',
                     hovertemplate: 'Lat: %{lat}<br>Lon: %{lon}<br>Time: %{text}<extra></extra>',
                     text: []
@@ -96,7 +89,6 @@ function initializeMap() {
         });
 }
 
-// Function to query route data
 function queryRoute() {
     const startDate = document.getElementById('start-date').value;
     const startTime = document.getElementById('start-time').value;
@@ -113,12 +105,10 @@ function queryRoute() {
         return;
     }
 
-    // Disable button during request
     const queryButton = document.getElementById('query-route');
     queryButton.disabled = true;
     queryButton.innerText = 'Querying...';
 
-    // Send request via WebSocket
     const request = {
         type: 'get_route',
         start_date: startDate,
@@ -130,9 +120,7 @@ function queryRoute() {
     socket.send(JSON.stringify(request));
 }
 
-// Handle route data response
 function handleRouteData(message) {
-    // Re-enable button
     const queryButton = document.getElementById('query-route');
     queryButton.disabled = false;
     queryButton.innerText = 'Get Route';
@@ -145,22 +133,18 @@ function handleRouteData(message) {
         return;
     }
 
-    // Store route data
     currentRouteData = routeData;
 
-    // Extract coordinates and timestamps for plotting
     const routeLons = routeData.map(point => point.lon);
     const routeLats = routeData.map(point => point.lat);
     const timestamps = routeData.map(point => new Date(point.timestamp).toLocaleString('hu-HU'));
 
-    // Update the route trace on the map
     Plotly.restyle('mapPlot', {
         'lon': [routeLons],
         'lat': [routeLats],
         'text': [timestamps]
     }, [1]);
 
-    // Update route info
     const startTime = new Date(routeData[0].timestamp).toLocaleString('hu-HU');
     const endTime = new Date(routeData[routeData.length - 1].timestamp).toLocaleString('hu-HU');
 
@@ -171,7 +155,6 @@ function handleRouteData(message) {
         End: ${endTime}
     `;
 
-    // Center map on route
     if (routeData.length > 0) {
         const centerLat = routeLats.reduce((a, b) => a + b, 0) / routeLats.length;
         const centerLon = routeLons.reduce((a, b) => a + b, 0) / routeLons.length;
@@ -186,20 +169,16 @@ function handleRouteData(message) {
     }
 }
 
-// Function to clear route
 function clearRoute() {
-    // Clear route trace from map
     Plotly.restyle('mapPlot', {
         'lon': [[]],
         'lat': [[]],
         'text': [[]]
     }, [1]);
 
-    // Clear route info
     document.getElementById('route-info').innerHTML = '';
     currentRouteData = null;
 
-    // Reset map view
     Plotly.relayout('mapPlot', {
         'mapbox.center': {
             lat: mapLayout.mapbox.center.lat,

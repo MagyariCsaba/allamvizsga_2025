@@ -18,10 +18,8 @@ class WebSocketServer:
         self.route_handler = RouteHandler()
 
     async def handler(self, websocket):
-        # Register client
         self.connected_clients.add(websocket)
         try:
-            # Listen for messages from clients
             async for message in websocket:
                 try:
                     data = json.loads(message)
@@ -34,15 +32,12 @@ class WebSocketServer:
         except websockets.exceptions.ConnectionClosed:
             pass
         finally:
-            # Unregister client
             self.connected_clients.remove(websocket)
 
     async def handle_client_message(self, websocket, data):
-        """Handle incoming messages from clients"""
         message_type = data.get('type')
 
         if message_type == 'get_route':
-            # Handle route request
             start_date = data.get('start_date')
             start_time = data.get('start_time')
             end_date = data.get('end_date')
@@ -67,13 +62,11 @@ class WebSocketServer:
         if not self.connected_clients:
             return
 
-        # Convert to JSON
         message = json.dumps({
             'type': 'coordinates_update',
             'data': coordinates
         })
 
-        # Send to all connected clients
         await asyncio.gather(
             *[client.send(message) for client in self.connected_clients],
             return_exceptions=True
@@ -86,38 +79,30 @@ class WebSocketServer:
                 await asyncio.sleep(1)
 
     def start(self):
-        """Start the WebSocket server in a separate thread"""
         self.server_thread = threading.Thread(target=self._run_server)
         self.server_thread.daemon = True
         self.server_thread.start()
         print(f"WebSocket server started at ws://localhost:{self.port}")
 
     def _run_server(self):
-        """Run the asyncio event loop in the thread"""
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
-        # Create the server coroutine
         server_coroutine = self.start_server()
 
-        # Run the server until stopped
         loop.run_until_complete(server_coroutine)
         loop.close()
 
     def update_coordinates(self, coordinates):
-        """Update coordinates and broadcast to all clients"""
-        # Create a new event loop for broadcasting
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
-        # Broadcast the coordinates
         try:
             loop.run_until_complete(self.broadcast_coordinates(coordinates))
         finally:
             loop.close()
 
     def stop(self):
-        """Stop the WebSocket server"""
         self.running = False
         if self.server_thread:
             self.server_thread.join(timeout=2)

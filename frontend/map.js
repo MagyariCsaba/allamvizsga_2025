@@ -2,13 +2,11 @@ let mapLayout;
 let socket;
 let isFirstUpdate = true;
 
-// Initialize map on page load
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
     initWebSocket();
 });
 
-// Initialize WebSocket connection
 function initWebSocket() {
     socket = new WebSocket('ws://localhost:8765');
 
@@ -40,7 +38,6 @@ function initWebSocket() {
     });
 }
 
-// Function to initialize the map
 function initializeMap() {
     fetch('map_config.json')
         .then(response => response.json())
@@ -48,7 +45,6 @@ function initializeMap() {
             mapLayout = config.layout;
 
             const mapData = [
-                // Streets layer
                 {
                     type: 'scattermapbox',
                     lon: config.streets.lon,
@@ -58,7 +54,7 @@ function initializeMap() {
                     hoverinfo: 'none',
                     name: 'Streets'
                 },
-                // Bicycle frame (live position)
+
                 {
                     type: 'scattermapbox',
                     lon: [],
@@ -68,7 +64,7 @@ function initializeMap() {
                     line: {width: 4, color: 'blue'},
                     name: 'Bicycle Frame'
                 },
-                // Front wheel (live position)
+
                 {
                     type: 'scattermapbox',
                     lon: [],
@@ -88,7 +84,6 @@ function initializeMap() {
         });
 }
 
-// Function to update bicycle position (live tracking)
 function updateBicyclePosition(coords) {
     Plotly.restyle('mapPlot', {
         'lon': [[coords.rear_lon, coords.front_lon]],

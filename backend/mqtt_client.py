@@ -13,15 +13,13 @@ class MQTTClient:
         self.db_handler = db_handler
         self.map_drawer = map_drawer
 
-        # Message processing settings
         self.message_counter = 0
-        self.update_frequency = 5 #after every x message
+        self.update_frequency = 1
         self.running = True
 
 
     def on_message(self, client_, userdata, message):
         try:
-            # Decode message
             message_content = message.payload.decode('utf-8')
             data = json.loads(message_content)
 
@@ -36,13 +34,10 @@ class MQTTClient:
                 ay2 = data['imu2Accel'][1]
                 alpha = math.atan2(ay2, ax2)
 
-                # Get GPS coordinates
                 lat, lon = data['gpsPos'][0], data['gpsPos'][1]
 
-                # Save to database
                 self.db_handler.save_message(data)
 
-                # Update map
                 self.map_drawer.plot_bicycle(lat, lon, theta, alpha)
                 print(f"Map updated with: lat={lat}, lon={lon}, theta={theta}, alpha={alpha}")
 
