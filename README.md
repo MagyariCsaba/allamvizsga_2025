@@ -1,4 +1,4 @@
-# Élő Járműkövetési Rendszer
+# Bicikli felügyelő rendszer önvezető jármű technológiákhoz
 
 Valós idejű kerékpárkövetési alkalmazás, amely GPS és IMU szenzor adatokat segítségével jelenít meg egy kerékpárt MQTT üzenetekből egy interaktív térképen Plotly és WebSocket technológiák használatával.
 
