@@ -1,7 +1,6 @@
-# Bicikli felügyelő rendszer önvezető jármű technológiákhoz
+# Élő Járműkövetési Rendszer
 
 Valós idejű kerékpárkövetési alkalmazás, amely GPS és IMU szenzor adatokat segítségével jelenít meg egy kerékpárt MQTT üzenetekből egy interaktív térképen Plotly és WebSocket technológiák használatával.
-
 
 ## 🚴‍♂️ Főbb Funkciók
 
@@ -12,7 +11,6 @@ Valós idejű kerékpárkövetési alkalmazás, amely GPS és IMU szenzor adatok
 - **Adatbázis tárolás**: Összes szenzor leolvasás tartós tárolása
 - **WebSocket kommunikáció**: Valós idejű adatátvitel a webes felületre
 
-
 ## 📋 Rendszerkövetelmények
 
 - Python 3.7+
@@ -20,38 +18,44 @@ Valós idejű kerékpárkövetési alkalmazás, amely GPS és IMU szenzor adatok
 - MQTT broker (Mosquitto)
 - Modern webböngésző WebSocket támogatással
 
-
 ## 🛠️ Telepítés
 
 ### 1. Projekt Letöltése és Környezet Beállítása
 
+```bash
 git clone <repository-url>
+```
 
 ### 2. Szükséges Python Csomagok Telepítése
 
+```bash
 pip install sqlalchemy pymysql python-dotenv paho-mqtt osmnx plotly websockets numpy
+```
 
 ### 3. Adatbázis Konfigurációja
 
 Hozz létre egy `.env` fájlt a projekt gyökérkönyvtárában:
 
+```env
 DATABASE_URI=mysql+pymysql://felhasználónév:jelszó@host:port/adatbázis_név
+```
 
 Példa:
+```env
 DATABASE_URI=mysql+pymysql://root:jelszó@127.0.0.1:3306/jarmu_kovetes
+```
 
 ### 4. MQTT Broker Beállítása
 
 Mosquitto MQTT broker telepítése és indítása:
 
-Hivatalos oldal:
-(https://mosquitto.org/)
-
+Hivatalos oldal: https://mosquitto.org/
 
 ## 📊 Adatbázis Séma
 
 A rendszer automatikusan létrehozza a következő táblát:
 
+```sql
 CREATE TABLE mqtt_messages (
     id INTEGER PRIMARY KEY,
     timestamp DATETIME,
@@ -71,13 +75,15 @@ CREATE TABLE mqtt_messages (
     gyro_y2 FLOAT,     -- IMU2 giroszkóp Y
     gyro_z2 FLOAT      -- IMU2 giroszkóp Z
 );
-
+```
 
 ## 🚀 Használat
 
 ### 1. Alkalmazás Indítása
 
+```bash
 python main.py
+```
 
 Ez elvégzi a következőket:
 - Adatbázis kapcsolat inicializálása
@@ -90,6 +96,7 @@ Ez elvégzi a következőket:
 
 A rendszer JSON üzeneteket vár az `eesTopic` témában a következő struktúrával:
 
+```json
 {
     "gpsPos": [szélesség, hosszúság, magasság],
     "imuAccel": [ax, ay, az],
@@ -97,9 +104,11 @@ A rendszer JSON üzeneteket vár az `eesTopic` témában a következő struktúr
     "imu2Accel": [ax2, ay2, az2],
     "imu2Gyro": [gx2, gy2, gz2]
 }
+```
 
 ### 3. Teszt Adatok Küldése
 
+```bash
 # Példa MQTT üzenet
 mosquitto_pub -h localhost -t eesTopic -m '{
     "gpsPos": [46.5426, 24.5574, 350.0],
@@ -108,7 +117,7 @@ mosquitto_pub -h localhost -t eesTopic -m '{
     "imu2Accel": [0.15, 0.25, 9.85],
     "imu2Gyro": [0.015, 0.025, 0.035]
 }'
-
+```
 
 ## 🖥️ Webes Felület
 
@@ -123,7 +132,6 @@ mosquitto_pub -h localhost -t eesTopic -m '{
 - Interaktív útvonal megjelenítés
 - Útvonal statisztikák (időtartam, pontok száma)
 - Export lehetőségek
-
 
 ## 🏗️ Architektúra
 
@@ -144,25 +152,29 @@ mosquitto_pub -h localhost -t eesTopic -m '{
 - **`route_history.js`**: Útvonal történet funkcionalitás
 - **`styles.css`**: Reszponzív CSS stílus
 
-
 ## 🔧 Konfigurációs Beállítások
 
 ### Térkép Régió
 A követési régió megváltoztatásához módosítsd a helyet a `main.py`-ban:
 
+```python
 map_drawer = MapDrawer("Te Városod, Országod")
+```
 
 ### Frissítési Gyakoriság
 Valós idejű frissítési gyakoriság beállítása az `mqtt_client.py`-ban:
 
+```python
 self.update_frequency = 1  # Minden N-edik üzenet feldolgozása
+```
 
 ### Szerver Portok
 Szerver portok módosítása a `main.py`-ban:
 
+```python
 HTTP_PORT = 8000  # Webes felület port
 WS_PORT = 8765    # WebSocket port
-
+```
 
 ## 📡 Adatfolyam
 
@@ -171,14 +183,12 @@ WS_PORT = 8765    # WebSocket port
 3. **Megjelenítés** → WebSocket → Webes Felület
 4. **Történeti Elemzés** → Adatbázis Lekérdezés → Útvonal Megjelenítés
 
-
 ## 🛡️ Hibakezelés
 
 - Automatikus adatbázis újracsatlakozás kapcsolat megszakadás esetén
 - WebSocket automatikus újracsatlakozás funkcionalitás
 - MQTT üzenet validáció és hiba naplózás
 - Elegáns leállás rendszer megszakítás esetén
-
 
 ## 📝 Fejlesztés
 
