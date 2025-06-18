@@ -14,24 +14,18 @@ Base = declarative_base()
 
 
 class MQTTMessage(Base):
-    __tablename__ = 'mqtt_messages'
+    __tablename__ = 'mqtt_messages2'
     id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, default=datetime.utcnow)
     gps_x = Column(Float)
     gps_y = Column(Float)
     gps_z = Column(Float)
-    accel_x = Column(Float)
-    accel_y = Column(Float)
-    accel_z = Column(Float)
-    gyro_x = Column(Float)
-    gyro_y = Column(Float)
-    gyro_z = Column(Float)
-    accel_x2 = Column(Float)
-    accel_y2 = Column(Float)
-    accel_z2 = Column(Float)
-    gyro_x2 = Column(Float)
-    gyro_y2 = Column(Float)
-    gyro_z2 = Column(Float)
+    yaw = Column(Float)
+    roll = Column(Float)
+    pitch = Column(Float)
+    yaw2 = Column(Float)
+    roll2 = Column(Float)
+    pitch2 = Column(Float)
 
 
 Base.metadata.create_all(engine)
@@ -45,22 +39,19 @@ class DatabaseHandler:
         try:
             mqtt_message = MQTTMessage(
                 timestamp=datetime.now(),
-                gps_x=data['gpsPos'][0],
-                gps_y=data['gpsPos'][1],
-                gps_z=data['gpsPos'][2],
-                accel_x=data['imuAccel'][0],
-                accel_y=data['imuAccel'][1],
-                accel_z=data['imuAccel'][2],
-                gyro_x=data['imuGyro'][0],
-                gyro_y=data['imuGyro'][1],
-                gyro_z=data['imuGyro'][2],
-                accel_x2=data['imu2Accel'][0],
-                accel_y2=data['imu2Accel'][1],
-                accel_z2=data['imu2Accel'][2],
-                gyro_x2=data['imu2Gyro'][0],
-                gyro_y2=data['imu2Gyro'][1],
-                gyro_z2=data['imu2Gyro'][2]
-            )
+
+                gps_x = data["gpsPos"][0],
+                gps_y = data["gpsPos"][1],
+                gps_z = data["gpsPos"][2],
+
+                yaw = data["imuAngles"][0],
+                roll = data["imuAngles"][1],
+                pitch = data["imuAngles"][2],
+
+                yaw2 = data["imu2Angles"][0],
+                roll2 = data["imu2Angles"][1],
+                pitch2 = data["imu2Angles"][2]
+                )
             self.session.add(mqtt_message)
             self.session.commit()
         except SQLAlchemyError as e:

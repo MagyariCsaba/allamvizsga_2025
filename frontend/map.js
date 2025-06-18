@@ -95,7 +95,10 @@ function updateBicyclePosition(coords) {
         'lat': [[coords.front_lat, coords.wheel_lat]]
     }, [2]);
 
-    centerMapOnBicycle(coords.rear_lat, coords.rear_lon);
+    if (isFirstUpdate) {
+        centerMapOnBicycle(coords.rear_lat, coords.rear_lon);
+        isFirstUpdate = false;
+    }
 }
 
 function centerMapOnBicycle(lat, lon) {
@@ -103,13 +106,9 @@ function centerMapOnBicycle(lat, lon) {
         'mapbox.center': {
             lat: lat,
             lon: lon
-        }
+        },
+        'mapbox.zoom': 15
     };
-
-    if (isFirstUpdate) {
-        updatedLayout['mapbox.zoom'] = 15;
-        isFirstUpdate = false;
-    }
 
     Plotly.relayout('mapPlot', updatedLayout);
 }

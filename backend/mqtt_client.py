@@ -14,7 +14,7 @@ class MQTTClient:
         self.map_drawer = map_drawer
 
         self.message_counter = 0
-        self.update_frequency = 1
+        self.update_frequency = 10
         self.running = True
 
 
@@ -26,13 +26,10 @@ class MQTTClient:
             self.message_counter += 1
 
             if self.message_counter % self.update_frequency == 0:
-                ax = data['imuAccel'][0]
-                ay = data['imuAccel'][1]
-                theta = math.atan2(ay, ax)
 
-                ax2 = data['imu2Accel'][0]
-                ay2 = data['imu2Accel'][1]
-                alpha = math.atan2(ay2, ax2)
+                theta = data['imuAngles'][0]
+
+                alpha = data['imu2Angles'][0]
 
                 lat, lon = data['gpsPos'][0], data['gpsPos'][1]
 
