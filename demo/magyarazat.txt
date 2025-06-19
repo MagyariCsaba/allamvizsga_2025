@@ -1,0 +1,3 @@
+A videó első felében a valós idejű járműkövetés kerül bemutatásra, amely élő adatok alapján jeleníti meg
+a jármű aktuális pozícióját. A második részben a rendszer egy korábban rögzített útvonalat jelenít meg,
+amelyet az adatbázisból történő lekérdezés alapján rekonstruál.
