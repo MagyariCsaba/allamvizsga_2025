@@ -59,21 +59,15 @@ A rendszer automatikusan létrehozza a következő táblát:
 CREATE TABLE mqtt_messages (
     id INTEGER PRIMARY KEY,
     timestamp DATETIME,
-    gps_x FLOAT,       -- GPS szélesség
-    gps_y FLOAT,       -- GPS hosszúság  
-    gps_z FLOAT,       -- GPS magasság
-    accel_x FLOAT,     -- IMU1 gyorsulás X
-    accel_y FLOAT,     -- IMU1 gyorsulás Y
-    accel_z FLOAT,     -- IMU1 gyorsulás Z
-    gyro_x FLOAT,      -- IMU1 giroszkóp X
-    gyro_y FLOAT,      -- IMU1 giroszkóp Y
-    gyro_z FLOAT,      -- IMU1 giroszkóp Z
-    accel_x2 FLOAT,    -- IMU2 gyorsulás X
-    accel_y2 FLOAT,    -- IMU2 gyorsulás Y
-    accel_z2 FLOAT,    -- IMU2 gyorsulás Z
-    gyro_x2 FLOAT,     -- IMU2 giroszkóp X
-    gyro_y2 FLOAT,     -- IMU2 giroszkóp Y
-    gyro_z2 FLOAT      -- IMU2 giroszkóp Z
+    gps_x FLOAT,
+    gps_y FLOAT, 
+    gps_z FLOAT,
+    yaw FLOAT,
+    roll FLOAT,
+    pitch FLOAT,
+    yaw2 FLOAT,
+    roll2 FLOAT,
+    pitch2 FLOAT
 );
 ```
 
@@ -99,10 +93,8 @@ A rendszer JSON üzeneteket vár az `eesTopic` témában a következő struktúr
 ```json
 {
     "gpsPos": [szélesség, hosszúság, magasság],
-    "imuAccel": [ax, ay, az],
-    "imuGyro": [gx, gy, gz],
-    "imu2Accel": [ax2, ay2, az2],
-    "imu2Gyro": [gx2, gy2, gz2]
+    "imuAngles": [yaw, roll, pitch],
+    "imu2Angles": [yaw2, roll2, pitch2]
 }
 ```
 
@@ -112,10 +104,8 @@ A rendszer JSON üzeneteket vár az `eesTopic` témában a következő struktúr
 # Példa MQTT üzenet
 mosquitto_pub -h localhost -t eesTopic -m '{
     "gpsPos": [46.5426, 24.5574, 350.0],
-    "imuAccel": [0.1, 0.2, 9.8],
-    "imuGyro": [0.01, 0.02, 0.03],
-    "imu2Accel": [0.15, 0.25, 9.85],
-    "imu2Gyro": [0.015, 0.025, 0.035]
+    "imuAngles": [0.1, 0.2, 0.3],
+    "imuAngles2": [0.01, 0.02, 0.03]
 }'
 ```
 
